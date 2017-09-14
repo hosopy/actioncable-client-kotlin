@@ -12,6 +12,19 @@ Please see [Action Cable Overview](http://guides.rubyonrails.org/action_cable_ov
 * Kotlin 1.1.4-3 or later
 * [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) (experimental in Kotlin 1.1)
 
+## Gradle
+
+```groovy
+repositories {
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile 'com.github.hosopy:actioncable-client-kotlin:-SNAPSHOT'
+}
+```
+
 ## Basic
 
 ```kotlin
