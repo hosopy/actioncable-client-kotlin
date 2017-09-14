@@ -6,7 +6,7 @@ import com.squareup.okhttp.mockwebserver.MockResponse
 import com.squareup.okhttp.mockwebserver.MockWebServer
 import com.squareup.okhttp.ws.WebSocket
 import com.squareup.okhttp.ws.WebSocketListener
-import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
@@ -45,7 +45,7 @@ class ConsumerTest {
         val mockWebServer = MockWebServer()
         val mockResponse = MockResponse().withWebSocketUpgrade(object : DefaultWebSocketListener() {
             override fun onOpen(webSocket: WebSocket?, response: Response?) {
-                launch(CommonPool) {
+                launch(Unconfined) {
                     events.send("onOpen")
                 }
             }
@@ -68,13 +68,13 @@ class ConsumerTest {
         val mockWebServer = MockWebServer()
         val mockResponse = MockResponse().withWebSocketUpgrade(object : DefaultWebSocketListener() {
             override fun onOpen(webSocket: WebSocket?, response: Response?) {
-                launch(CommonPool) {
+                launch(Unconfined) {
                     events.send("onOpen")
                 }
             }
 
             override fun onClose(code: Int, reason: String?) {
-                launch(CommonPool) {
+                launch(Unconfined) {
                     events.send("onClose")
                 }
             }
@@ -101,7 +101,7 @@ class ConsumerTest {
         val mockWebServer = MockWebServer()
         val mockResponse = MockResponse().withWebSocketUpgrade(object : DefaultWebSocketListener() {
             override fun onOpen(webSocket: WebSocket?, response: Response?) {
-                launch(CommonPool) {
+                launch(Unconfined) {
                     events.send("onOpen")
                 }
             }
@@ -109,7 +109,7 @@ class ConsumerTest {
             override fun onMessage(message: ResponseBody?) {
                 message?.also {
                     it.source()?.readUtf8()?.also { text ->
-                        launch(CommonPool) {
+                        launch(Unconfined) {
                             events.send("onMessage:$text")
                         }
                     }

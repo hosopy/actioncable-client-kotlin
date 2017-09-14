@@ -7,7 +7,7 @@ import com.squareup.okhttp.mockwebserver.MockResponse
 import com.squareup.okhttp.mockwebserver.MockWebServer
 import com.squareup.okhttp.ws.WebSocket
 import com.squareup.okhttp.ws.WebSocketListener
-import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
@@ -32,7 +32,7 @@ class SubscriptionsTest {
             override fun onOpen(webSocket: WebSocket?, response: Response?) {
                 currentWebSocket = webSocket
                 // send welcome message
-                launch(CommonPool) {
+                launch(Unconfined) {
                     currentWebSocket?.sendMessage(RequestBody.create(WebSocket.TEXT, "{\"type\":\"welcome\"}"))
                 }
             }
@@ -42,7 +42,7 @@ class SubscriptionsTest {
                     val text = it.source()?.readUtf8()!!
                     if (text.contains("subscribe")) {
                         // accept subscribe command
-                        launch(CommonPool) {
+                        launch(Unconfined) {
                             currentWebSocket?.sendMessage(RequestBody.create(WebSocket.TEXT, "{\"identifier\":\"{\\\"channel\\\":\\\"CommentsChannel\\\"}\",\"type\":\"confirm_subscription\"}"))
                         }
                     }
@@ -59,7 +59,7 @@ class SubscriptionsTest {
 
         val subscription = consumer.subscriptions.create(channel)
         subscription.onConnected = {
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onConnected")
             }
         }
@@ -80,7 +80,7 @@ class SubscriptionsTest {
             override fun onOpen(webSocket: WebSocket?, response: Response?) {
                 currentWebSocket = webSocket
                 // send welcome message
-                launch(CommonPool) {
+                launch(Unconfined) {
                     currentWebSocket?.sendMessage(RequestBody.create(WebSocket.TEXT, "{\"type\":\"welcome\"}"))
                 }
             }
@@ -89,12 +89,12 @@ class SubscriptionsTest {
                 message?.also {
                     val text = it.source()?.readUtf8()!!
                     if (text.contains("unsubscribe")) {
-                        launch(CommonPool) {
+                        launch(Unconfined) {
                             events.send(text)
                         }
                     } else if (text.contains("subscribe")) {
                         // accept subscribe command
-                        launch(CommonPool) {
+                        launch(Unconfined) {
                             currentWebSocket?.sendMessage(RequestBody.create(WebSocket.TEXT, "{\"identifier\":\"{\\\"channel\\\":\\\"CommentsChannel\\\"}\",\"type\":\"confirm_subscription\"}"))
                         }
                     }
@@ -109,13 +109,13 @@ class SubscriptionsTest {
         val subscription2 = consumer.subscriptions.create(Channel("NotificationChannel"))
 
         subscription1.onConnected = {
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onConnected")
             }
         }
 
         subscription2.onConnected = {
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onConnected")
             }
         }

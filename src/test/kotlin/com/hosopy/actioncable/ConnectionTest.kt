@@ -7,7 +7,7 @@ import com.squareup.okhttp.mockwebserver.MockResponse
 import com.squareup.okhttp.mockwebserver.MockWebServer
 import com.squareup.okhttp.ws.WebSocket
 import com.squareup.okhttp.ws.WebSocketListener
-import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
@@ -38,7 +38,7 @@ class ConnectionTest {
 
         val connection = Connection(URI(mockWebServer.url("/").uri().toString()), Connection.Options())
         connection.onOpen = {
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onOpen")
             }
         }
@@ -64,7 +64,7 @@ class ConnectionTest {
 
         val connection = Connection(URI(mockWebServer.url("/").uri().toString()), Connection.Options())
         connection.onMessage = { text ->
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onMessage:$text")
             }
 
@@ -87,12 +87,12 @@ class ConnectionTest {
 
         val connection = Connection(URI(mockWebServer.url("/").uri().toString()), Connection.Options())
         connection.onOpen = {
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onOpen")
             }
         }
         connection.onClose = {
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onClose")
             }
         }
@@ -122,7 +122,7 @@ class ConnectionTest {
 
         val connection = Connection(URI(mockWebServer.url("/").uri().toString()), Connection.Options())
         connection.onClose = {
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onClose")
             }
         }
@@ -146,7 +146,7 @@ class ConnectionTest {
 
         val connection = Connection(URI(mockWebServer.url("/").uri().toString()), Connection.Options())
         connection.onFailure = {
-            launch(CommonPool) {
+            launch(Unconfined) {
                 events.send("onFailure")
             }
         }
