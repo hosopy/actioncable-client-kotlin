@@ -1,6 +1,7 @@
 # actioncable-client-kotlin
 
 [![Build Status](https://travis-ci.org/hosopy/actioncable-client-kotlin.svg?branch=master)](https://travis-ci.org/hosopy/actioncable-client-kotlin)
+[![Release](https://jitpack.io/v/hosopy/actioncable-client-kotlin.svg)](https://jitpack.io/#hosopy/actioncable-client-kotlin)
 
 This is the actioncable client library for Kotlin.
 Please see [Action Cable Overview](http://guides.rubyonrails.org/action_cable_overview.html) to understand actioncable itself.
