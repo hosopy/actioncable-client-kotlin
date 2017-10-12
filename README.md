@@ -94,10 +94,10 @@ subscription.perform("send", mapOf(
     "comment" to mapOf(
         "text" to "This is string.",
         "private" to true,
-        "images" to [
+        "images" to arrayOf(
             "http://example.com/image1.jpg",
             "http://example.com/image2.jpg"
-        ]
+        )
     )
 ))
 ```
