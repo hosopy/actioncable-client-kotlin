@@ -129,7 +129,7 @@ class Connection internal constructor(private val uri: URI, private val options:
 
         val requestBuilder = Request.Builder().url(urlBuilder.toString())
 
-        options.headers?.forEach { key, value -> requestBuilder.addHeader(key, value) }
+        options.headers?.forEach { (key, value) -> requestBuilder.addHeader(key, value) }
 
         val request = requestBuilder.build()
 
