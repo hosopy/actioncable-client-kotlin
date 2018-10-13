@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.hosopy:actioncable-client-kotlin:0.0.2'
+    compile 'com.github.hosopy:actioncable-client-kotlin:0.0.3'
 }
 ```
 
