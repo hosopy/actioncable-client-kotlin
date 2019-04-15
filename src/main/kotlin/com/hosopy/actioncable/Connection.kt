@@ -4,15 +4,19 @@ import com.squareup.okhttp.*
 import com.squareup.okhttp.ws.WebSocket
 import com.squareup.okhttp.ws.WebSocketCall
 import com.squareup.okhttp.ws.WebSocketListener
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.actor
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.actor
 import okio.Buffer
 import java.io.IOException
 import java.net.CookieHandler
 import java.net.URI
 import java.net.URLEncoder
+import java.util.concurrent.Executors
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
+import kotlin.math.sin
 
 typealias OkHttpClientFactory = () -> OkHttpClient
 
@@ -197,16 +201,21 @@ class Connection internal constructor(private val uri: URI, private val options:
         }
     }
 }
+@ObsoleteCoroutinesApi
+private class SerializedOperationQueue(capacity: Int = 0) : CoroutineScope {
+    val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Unconfined + job
 
-private class SerializedOperationQueue(name: String = "EventLoop", capacity: Int = 0) {
-    private val singleThreadContext = newSingleThreadContext(name)
+    private val singleThreadContext = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+
     private val actor = actor<suspend () -> Unit>(singleThreadContext, capacity) {
         for (operation in channel) {
             operation.invoke()
         }
     }
 
-    fun push(operation: suspend () -> Unit) = launch(Unconfined) {
+    fun push(operation: suspend () -> Unit) = launch {
         actor.send(operation)
     }
 }

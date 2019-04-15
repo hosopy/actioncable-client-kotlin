@@ -45,7 +45,7 @@ class Subscription internal constructor(private val consumer: Consumer, channel:
      * @param params Parameters passed to procedure
      */
     fun perform(action: String, params: Map<String, Any?> = mapOf()) {
-        require(!params.containsKey("action"), { "action is reserved key" })
+        require(!params.containsKey("action")) { "action is reserved key" }
         val data = params.toMutableMap()
         data["action"] = action
         consumer.send(Command.message(identifier, data))
