@@ -1,5 +1,5 @@
 group 'com.hosopy'
-version '0.0.4'
+version '0.0.5'
 
 buildscript {
     repositories {
@@ -21,6 +21,11 @@ allprojects {
         jcenter()
         google()
         maven { url "https://maven.google.com"}
+    }
+}
+android {
+ packagingOptions {
+        exclude 'META-INF/atomicfu.kotlin_module'
     }
 }
 
