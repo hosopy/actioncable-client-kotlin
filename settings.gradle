@@ -1,2 +1,1 @@
 include ':actioncable-client-kotlin'
-rootProject.name = 'actioncable-client-kotlin'

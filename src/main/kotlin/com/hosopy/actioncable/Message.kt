@@ -2,7 +2,6 @@ package com.hosopy.actioncable
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.beust.klaxon.string
 
 internal data class Message(val type: Type, val identifier: String?, val body: Any?) {
 
@@ -15,7 +14,7 @@ internal data class Message(val type: Type, val identifier: String?, val body: A
     }
 
     companion object {
-        private val parser: Parser = Parser()
+        private val parser: Parser = Parser.default()
 
         fun createFromJsonString(jsonString: String): Message? {
             return (parser.parse(StringBuilder(jsonString)) as JsonObject?)?.let { json ->
