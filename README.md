@@ -3,6 +3,9 @@
 [![Build Status](https://travis-ci.org/raquezha/actioncable-client-kotlin.svg?branch=0.0.10-beta)](https://travis-ci.org/raquezha/actioncable-client-kotlin)
 [![Release](https://jitpack.io/v/raquezha/actioncable-client-kotlin.svg)](https://jitpack.io/#raquezha/actioncable-client-kotlin)
 
+# Note
+I decided to fork this repo because hosopy is not updating his project anymore. If you want can use this forked version you can read the instructions below.
+
 This is the actioncable client library for Kotlin.
 Please see [Action Cable Overview](http://guides.rubyonrails.org/action_cable_overview.html) to understand actioncable itself.
 
@@ -21,9 +24,8 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
-If you want to use this fork version:
 dependencies {
-     implementation 'com.github.raquezha:actioncable-client-kotlin:Tag'
+    implementation 'com.github.raquezha:actioncable-client-kotlin:0.0.10-beta'
 }
 ```
 
