@@ -174,6 +174,10 @@ class SubscriptionTest {
                 events.send("onReceived:${(data as JsonObject).toJsonString()}")
             }
         }
+        
+        subscription.onDisconnected = {
+        
+        }
 
         consumer.connect()
 

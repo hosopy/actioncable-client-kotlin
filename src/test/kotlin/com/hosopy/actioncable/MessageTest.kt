@@ -44,14 +44,24 @@ class MessageTest {
         assertEquals("{\"channel\":\"CommentsChannel\"}", message?.identifier)
         assertEquals(null, message?.body)
     }
-
+    
     @Test
     fun createFromJsonStringForMessage() {
         val jsonString = "{\"identifier\":\"{\\\"channel\\\":\\\"CommentsChannel\\\"}\",\"message\":{\"foo\":\"bar\"}}"
         val message = Message.createFromJsonString(jsonString)
-
+        
         assertEquals(Message.Type.MESSAGE, message?.type)
         assertEquals("{\"channel\":\"CommentsChannel\"}", message?.identifier)
         assertEquals(JsonObject(mapOf("foo" to "bar")), message?.body)
+    }
+    
+    @Test
+    fun createFromJsonStringForString() {
+        val jsonString = "{\"identifier\":\"{\\\"channel\\\":\\\"CommentsChannel\\\"}\",\"message\": \"bar\"}"
+        val message = Message.createFromJsonString(jsonString)
+        
+        assertEquals(Message.Type.MESSAGE, message?.type)
+        assertEquals("{\"channel\":\"CommentsChannel\"}", message?.identifier)
+        assertEquals("bar", message?.body)
     }
 }

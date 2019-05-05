@@ -1,6 +1,12 @@
 package com.hosopy.actioncable
 
-import kotlinx.coroutines.*
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 private const val STALE_THRESHOLD = 6
@@ -50,6 +56,7 @@ internal class ConnectionMonitor(private val connection: Connection, private val
         pingedAt = now()
     }
 
+    @ObsoleteCoroutinesApi
     internal fun start() {
         reset()
         stoppedAt = 0L
@@ -62,6 +69,7 @@ internal class ConnectionMonitor(private val connection: Connection, private val
         stoppedAt = now()
     }
 
+    @ObsoleteCoroutinesApi
     private fun poll() {
         launch {
             delay(interval)
@@ -81,6 +89,7 @@ internal class ConnectionMonitor(private val connection: Connection, private val
 
     private fun now(): Long = System.currentTimeMillis()
 
+    @ObsoleteCoroutinesApi
     private fun reconnectIfStale() {
         if (options.reconnection && connectionIsStale && reconnectAttempts < options.reconnectionMaxAttempts) {
             reconnectAttempts++
