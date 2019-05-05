@@ -23,7 +23,7 @@ data class Channel(val channel: String, private val params: Map<String, Any?> = 
     internal val identifier: String
 
     init {
-        require(!params.containsKey("channel"), { "channel is a reserved key" })
+        require(!params.containsKey("channel")) { "channel is a reserved key" }
 
         val json = JsonObject(params)
         json["channel"] = channel

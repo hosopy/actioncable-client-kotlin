@@ -1,20 +1,27 @@
 package com.hosopy.actioncable
 
-import com.squareup.okhttp.*
+import com.squareup.okhttp.OkHttpClient
+import com.squareup.okhttp.Request
+import com.squareup.okhttp.RequestBody
+import com.squareup.okhttp.Response
+import com.squareup.okhttp.ResponseBody
 import com.squareup.okhttp.ws.WebSocket
 import com.squareup.okhttp.ws.WebSocketCall
 import com.squareup.okhttp.ws.WebSocketListener
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.actor
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.actor
 import okio.Buffer
 import java.io.IOException
 import java.net.CookieHandler
 import java.net.URI
 import java.net.URLEncoder
+import java.util.concurrent.Executors
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
+import kotlin.coroutines.CoroutineContext
 
 typealias OkHttpClientFactory = () -> OkHttpClient
+
 
 class Connection internal constructor(private val uri: URI, private val options: Options) {
     /**
@@ -59,11 +66,13 @@ class Connection internal constructor(private val uri: URI, private val options:
     private var state = State.CONNECTING
 
     private var webSocket: WebSocket? = null
-
+    
+    @ObsoleteCoroutinesApi
     private val operationQueue = SerializedOperationQueue()
 
     private var isReopening = false
 
+    @ObsoleteCoroutinesApi
     internal fun open() {
         operationQueue.push {
             if (isOpen()) {
@@ -74,6 +83,7 @@ class Connection internal constructor(private val uri: URI, private val options:
         }
     }
 
+    @ObsoleteCoroutinesApi
     internal fun close() {
         operationQueue.push {
             webSocket?.let { webSocket ->
@@ -91,6 +101,7 @@ class Connection internal constructor(private val uri: URI, private val options:
         }
     }
 
+    @ObsoleteCoroutinesApi
     internal fun reopen() {
         if (isState(State.CLOSED)) {
             open()
@@ -100,6 +111,7 @@ class Connection internal constructor(private val uri: URI, private val options:
         }
     }
 
+    @ObsoleteCoroutinesApi
     internal fun send(data: String): Boolean {
         if (!isOpen()) return false
 
@@ -114,6 +126,7 @@ class Connection internal constructor(private val uri: URI, private val options:
 
     private fun isOpen() = webSocket?.let { isState(State.OPEN) } ?: false
 
+    @ObsoleteCoroutinesApi
     private fun doOpen() {
         state = State.CONNECTING
 
@@ -153,6 +166,7 @@ class Connection internal constructor(private val uri: URI, private val options:
         onFailure.invoke(error)
     }
 
+    @ObsoleteCoroutinesApi
     private val webSocketListener = object : WebSocketListener {
         override fun onOpen(openedWebSocket: WebSocket?, response: Response?) {
             state = State.OPEN
@@ -198,15 +212,21 @@ class Connection internal constructor(private val uri: URI, private val options:
     }
 }
 
-private class SerializedOperationQueue(name: String = "EventLoop", capacity: Int = 0) {
-    private val singleThreadContext = newSingleThreadContext(name)
+@ObsoleteCoroutinesApi
+private class SerializedOperationQueue(capacity: Int = 0) : CoroutineScope {
+    val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Unconfined + job
+
+    private val singleThreadContext = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+
     private val actor = actor<suspend () -> Unit>(singleThreadContext, capacity) {
         for (operation in channel) {
             operation.invoke()
         }
     }
 
-    fun push(operation: suspend () -> Unit) = launch(Unconfined) {
+    fun push(operation: suspend () -> Unit) = launch {
         actor.send(operation)
     }
 }
