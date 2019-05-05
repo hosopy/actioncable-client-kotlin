@@ -2,8 +2,6 @@ package com.hosopy.actioncable
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.google.gson.JsonParser
-
 
 internal data class Message(val type: Type, val identifier: String?, val body: Any?) {
 	
