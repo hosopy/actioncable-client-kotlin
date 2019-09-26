@@ -4,8 +4,11 @@ import com.squareup.okhttp.*
 import com.squareup.okhttp.ws.WebSocket
 import com.squareup.okhttp.ws.WebSocketCall
 import com.squareup.okhttp.ws.WebSocketListener
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.actor
+import kotlinx.coroutines.Dispatchers.Unconfined
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import okio.Buffer
 import java.io.IOException
 import java.net.CookieHandler
@@ -16,6 +19,7 @@ import javax.net.ssl.SSLContext
 
 typealias OkHttpClientFactory = () -> OkHttpClient
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 class Connection internal constructor(private val uri: URI, private val options: Options) {
     /**
      * Options for connection.
@@ -60,10 +64,12 @@ class Connection internal constructor(private val uri: URI, private val options:
 
     private var webSocket: WebSocket? = null
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     private val operationQueue = SerializedOperationQueue()
 
     private var isReopening = false
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     internal fun open() {
         operationQueue.push {
             if (isOpen()) {
@@ -74,6 +80,7 @@ class Connection internal constructor(private val uri: URI, private val options:
         }
     }
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     internal fun close() {
         operationQueue.push {
             webSocket?.let { webSocket ->
@@ -198,15 +205,17 @@ class Connection internal constructor(private val uri: URI, private val options:
     }
 }
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 private class SerializedOperationQueue(name: String = "EventLoop", capacity: Int = 0) {
     private val singleThreadContext = newSingleThreadContext(name)
-    private val actor = actor<suspend () -> Unit>(singleThreadContext, capacity) {
+
+    private val actor = GlobalScope.actor<suspend () -> Unit>(singleThreadContext, capacity) {
         for (operation in channel) {
             operation.invoke()
         }
     }
 
-    fun push(operation: suspend () -> Unit) = launch(Unconfined) {
+    fun push(operation: suspend () -> Unit) = GlobalScope.launch(Unconfined) {
         actor.send(operation)
     }
 }

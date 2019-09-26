@@ -2,6 +2,7 @@ package com.hosopy.actioncable
 
 import java.net.URI
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 object ActionCable {
     /**
      * Create an actioncable consumer.
