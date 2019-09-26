@@ -7,10 +7,11 @@ import com.squareup.okhttp.mockwebserver.MockResponse
 import com.squareup.okhttp.mockwebserver.MockWebServer
 import com.squareup.okhttp.ws.WebSocket
 import com.squareup.okhttp.ws.WebSocketListener
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Dispatchers.Unconfined
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okio.Buffer
 import org.junit.Test
 import java.io.IOException
@@ -38,7 +39,7 @@ class ConnectionTest {
 
         val connection = Connection(URI(mockWebServer.url("/").uri().toString()), Connection.Options())
         connection.onOpen = {
-            launch(Unconfined) {
+            GlobalScope.launch(Unconfined) {
                 events.send("onOpen")
             }
         }

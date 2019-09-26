@@ -15,6 +15,7 @@ import java.net.URI
  * val subscription = consumer.subscriptions.create(appearanceChannel)
  * ```
  */
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 class Consumer internal constructor(uri: URI, options: Options = Options()) {
     /**
      * Consumer options.

@@ -1,11 +1,13 @@
 package com.hosopy.actioncable
 
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 private const val STALE_THRESHOLD = 6
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 internal class ConnectionMonitor(private val connection: Connection, private val options: Connection.Options) {
 
     private var pingedAt = 0L
@@ -60,7 +62,7 @@ internal class ConnectionMonitor(private val connection: Connection, private val
     }
 
     private fun poll() {
-        launch(CommonPool) {
+        GlobalScope.launch {
             delay(interval)
             while (true) {
                 if (stoppedAt == 0L) {
